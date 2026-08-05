@@ -1,4 +1,4 @@
-package com.abiramy.url_shortener_api;
+package com.abiramy.urlshortener;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
