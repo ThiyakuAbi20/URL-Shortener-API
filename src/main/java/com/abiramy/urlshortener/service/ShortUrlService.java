@@ -1,8 +1,14 @@
 package com.abiramy.urlshortener.service;
 
+import com.abiramy.urlshortener.dto.request.CreateShortUrlRequest;
+import com.abiramy.urlshortener.dto.response.CreateShortUrlResponse;
+import com.abiramy.urlshortener.entity.ShortUrl;
 import com.abiramy.urlshortener.repository.ShortUrlRepository;
+import org.springframework.stereotype.Service;
+
 import java.util.Random;
 
+@Service
 public class ShortUrlService {
 
     private final ShortUrlRepository shortUrlRepository;
@@ -15,23 +21,60 @@ public class ShortUrlService {
         this.shortUrlRepository = shortUrlRepository;
     }
 
-    private String generateShortCode(){
+    private String generateShortCode() {
 
-        Random random = new Random();
+        String shortCode;
 
-        StringBuilder shortCode = new StringBuilder();
+        do {
 
-        for(int i = 0; i < SHORT_CODE_LENGTH; i++){
+            Random random = new Random();
 
-            int randomIndex = random.nextInt(CHARACTERS.length());
+            StringBuilder builder = new StringBuilder();
 
-            shortCode.append(
-                    CHARACTERS.charAt(randomIndex)
+            for (int i = 0; i < SHORT_CODE_LENGTH; i++) {
+
+                int randomIndex = random.nextInt(CHARACTERS.length());
+
+                builder.append(
+                        CHARACTERS.charAt(randomIndex)
+                );
+            }
+
+            shortCode =  builder.toString();
+        } while (shortUrlRepository.findByShortCode(shortCode).isPresent());
+
+        return shortCode;
+    }
+
+    public CreateShortUrlResponse createShortUrl(
+            CreateShortUrlRequest request
+    ) {
+
+        if(request.getOriginalUrl() == null ||
+        request.getOriginalUrl().isBlank()){
+
+            throw new IllegalArgumentException(
+                    "Original URL is required"
             );
         }
 
-        return shortCode.toString();
-    }
+        String shortCode = generateShortCode();
 
+        ShortUrl shortUrl = new ShortUrl(
+                request.getOriginalUrl(),
+                shortCode,
+                request.getExpiresAt()
+        );
+
+        ShortUrl savedShortUrl = shortUrlRepository.save(shortUrl);
+
+        return new CreateShortUrlResponse(
+                savedShortUrl.getId(),
+                savedShortUrl.getOriginalUrl(),
+                savedShortUrl.getShortCode(),
+                "http://localhost:8080/r/" + savedShortUrl.getShortCode(),
+                "Short URL created successfully"
+        );
+    }
 
 }

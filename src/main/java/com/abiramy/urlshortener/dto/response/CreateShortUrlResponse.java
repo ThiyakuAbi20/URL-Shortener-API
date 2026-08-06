@@ -16,7 +16,13 @@ public class CreateShortUrlResponse {
 
     }
 
-    public CreateShortUrlResponse(Long id, String originalUrl, String shortCode, String shortUrl, String message) {
+    public CreateShortUrlResponse(
+            Long id,
+            String originalUrl,
+            String shortCode,
+            String shortUrl,
+            String message
+    ) {
         this.id = id;
         this.originalUrl = originalUrl;
         this.shortCode = shortCode;
