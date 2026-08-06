@@ -1,5 +1,6 @@
 package com.abiramy.urlshortener.controller;
 
+import com.abiramy.urlshortener.dto.RegisterRequest;
 import com.abiramy.urlshortener.entity.User;
 import com.abiramy.urlshortener.service.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +21,13 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public void registerUser(@RequestBody User user){
+    public void registerUser(@RequestBody RegisterRequest request){
+
+        User user = new User(
+                request.getUsername(),
+                request.getEmail(),
+                request.getPassword()
+        );
 
         userService.registerUser(user);
     }
