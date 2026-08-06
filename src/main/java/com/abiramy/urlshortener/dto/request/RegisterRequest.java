@@ -1,4 +1,4 @@
-package com.abiramy.urlshortener.dto;
+package com.abiramy.urlshortener.dto.request;
 
 public class RegisterRequest {
 
