@@ -2,6 +2,7 @@ package com.abiramy.urlshortener.service;
 
 import com.abiramy.urlshortener.dto.response.RegisterResponse;
 import com.abiramy.urlshortener.entity.User;
+import com.abiramy.urlshortener.exception.EmailAlreadyExistsException;
 import com.abiramy.urlshortener.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class UserService {
         }
 
         if(userRepository.existsByEmail(user.getEmail())){
-            throw new IllegalArgumentException("Email already exists.");
+            throw new EmailAlreadyExistsException("Email already exists.");
 
         }
 
