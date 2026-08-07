@@ -2,11 +2,13 @@ package com.abiramy.urlshortener.service;
 
 import com.abiramy.urlshortener.dto.request.CreateShortUrlRequest;
 import com.abiramy.urlshortener.dto.response.CreateShortUrlResponse;
+import com.abiramy.urlshortener.dto.response.ShortUrlResponse;
 import com.abiramy.urlshortener.entity.ShortUrl;
 import com.abiramy.urlshortener.exception.UrlNotFoundException;
 import com.abiramy.urlshortener.repository.ShortUrlRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -91,6 +93,21 @@ public class ShortUrlService {
                 "http://localhost:8080/r/" + savedShortUrl.getShortCode(),
                 "Short URL created successfully"
         );
+    }
+
+    public List<ShortUrlResponse> getAllUrls(){
+
+                return shortUrlRepository.findAll()
+                        .stream()
+                        .map(shortUrl -> new ShortUrlResponse(
+                                shortUrl.getId(),
+                                shortUrl.getOriginalUrl(),
+                                shortUrl.getShortCode(),
+                                "http://localhost:8080/r/" + shortUrl.getShortCode(),
+                                shortUrl.getClickCount(),
+                                shortUrl.getCreatedAt()
+                        ))
+                        .toList();
     }
 
 }
