@@ -3,6 +3,7 @@ package com.abiramy.urlshortener.service;
 import com.abiramy.urlshortener.dto.request.CreateShortUrlRequest;
 import com.abiramy.urlshortener.dto.response.CreateShortUrlResponse;
 import com.abiramy.urlshortener.entity.ShortUrl;
+import com.abiramy.urlshortener.exception.UrlNotFoundException;
 import com.abiramy.urlshortener.repository.ShortUrlRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,21 @@ public class ShortUrlService {
     private static final String CHARACTERS =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final int SHORT_CODE_LENGTH = 6;
+    public String redirectToOriginalUrl(String shortCode) {
+
+        ShortUrl shortUrl = shortUrlRepository
+                .findByShortCode(shortCode)
+                .orElseThrow(() ->
+                        new UrlNotFoundException("Short URL not found."));
+
+        shortUrl.setClickCount(
+                shortUrl.getClickCount() + 1
+        );
+
+        shortUrlRepository.save(shortUrl);
+
+        return shortUrl.getOriginalUrl();
+    }
 
 
     public ShortUrlService (ShortUrlRepository shortUrlRepository){
