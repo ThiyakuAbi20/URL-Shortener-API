@@ -1,6 +1,7 @@
 package com.abiramy.urlshortener.service;
 
 import com.abiramy.urlshortener.dto.request.CreateShortUrlRequest;
+import com.abiramy.urlshortener.dto.request.UpdateShortUrlRequest;
 import com.abiramy.urlshortener.dto.response.CreateShortUrlResponse;
 import com.abiramy.urlshortener.dto.response.ShortUrlResponse;
 import com.abiramy.urlshortener.entity.ShortUrl;
@@ -118,6 +119,36 @@ public class ShortUrlService {
                         new UrlNotFoundException("Short URL not found."));
 
         shortUrlRepository.delete(shortUrl);
+    }
+
+    public CreateShortUrlResponse updateUrl(
+            Long id,
+            UpdateShortUrlRequest request) {
+
+        ShortUrl shortUrl = shortUrlRepository
+                .findById(id)
+                .orElseThrow(() ->
+                        new UrlNotFoundException("Short URL not found."));
+
+        if (request.getOriginalUrl() == null ||
+                request.getOriginalUrl().isBlank()) {
+
+            throw new IllegalArgumentException(
+                    "Original URL is required");
+        }
+
+        shortUrl.setOriginalUrl(request.getOriginalUrl());
+        shortUrl.setExpiresAt(request.getExpiresAt());
+
+        ShortUrl updatedShortUrl = shortUrlRepository.save(shortUrl);
+
+        return new CreateShortUrlResponse(
+                updatedShortUrl.getId(),
+                updatedShortUrl.getOriginalUrl(),
+                updatedShortUrl.getShortCode(),
+                "http://localhost:8080/r/" + updatedShortUrl.getShortCode(),
+                "Short URL updated successfully"
+        );
     }
 
 }

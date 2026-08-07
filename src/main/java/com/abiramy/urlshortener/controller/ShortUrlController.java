@@ -1,6 +1,7 @@
 package com.abiramy.urlshortener.controller;
 
 import com.abiramy.urlshortener.dto.request.CreateShortUrlRequest;
+import com.abiramy.urlshortener.dto.request.UpdateShortUrlRequest;
 import com.abiramy.urlshortener.dto.response.CreateShortUrlResponse;
 import com.abiramy.urlshortener.dto.response.ShortUrlResponse;
 import com.abiramy.urlshortener.service.ShortUrlService;
@@ -51,6 +52,18 @@ public class ShortUrlController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CreateShortUrlResponse> updateUrl(
+            @PathVariable Long id,
+            @RequestBody UpdateShortUrlRequest request) {
+
+        CreateShortUrlResponse response =
+                shortUrlService.updateUrl(id, request);
+
+        return ResponseEntity.ok(response);
+    }
+
 
 
 
