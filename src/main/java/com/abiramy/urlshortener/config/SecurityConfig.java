@@ -19,7 +19,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer :: disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/users/register",
+                                "/api/users/**",
                                 "/api/urls/**",
                                 "/r/**"
                         ).permitAll()

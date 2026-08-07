@@ -1,6 +1,8 @@
 package com.abiramy.urlshortener.controller;
 
+import com.abiramy.urlshortener.dto.request.LoginRequest;
 import com.abiramy.urlshortener.dto.request.RegisterRequest;
+import com.abiramy.urlshortener.dto.response.LoginResponse;
 import com.abiramy.urlshortener.dto.response.RegisterResponse;
 import com.abiramy.urlshortener.entity.User;
 import com.abiramy.urlshortener.service.UserService;
@@ -38,6 +40,16 @@ public class UserController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(
+            @RequestBody LoginRequest request) {
+
+        LoginResponse response =
+                userService.login(request);
+
+        return ResponseEntity.ok(response);
     }
 
 
