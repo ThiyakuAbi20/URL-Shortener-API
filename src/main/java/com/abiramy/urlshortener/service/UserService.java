@@ -3,12 +3,11 @@ package com.abiramy.urlshortener.service;
 import com.abiramy.urlshortener.dto.request.LoginRequest;
 import com.abiramy.urlshortener.dto.response.LoginResponse;
 import com.abiramy.urlshortener.dto.response.RegisterResponse;
-import com.abiramy.urlshortener.entity.ShortUrl;
 import com.abiramy.urlshortener.entity.User;
 import com.abiramy.urlshortener.exception.EmailAlreadyExistsException;
 import com.abiramy.urlshortener.exception.InvalidCredentialsException;
-import com.abiramy.urlshortener.exception.UrlNotFoundException;
 import com.abiramy.urlshortener.repository.UserRepository;
+import com.abiramy.urlshortener.security.JwtService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +17,14 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       JwtService jwtService){
         this.userRepository = userRepository; //constructor injection
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
 
     }
 
@@ -68,11 +71,14 @@ public class UserService {
             );
 
         }
+
+        String token = jwtService.generateToken(user);
+
         return new LoginResponse(
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
-                "",
+                token,
                 "Login successful"
         );
     }
