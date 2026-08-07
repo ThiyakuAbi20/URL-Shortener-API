@@ -44,6 +44,15 @@ public class ShortUrlController {
         );
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUrl(@PathVariable Long id){
+
+        shortUrlService.deleteUrl(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+
 
 
 }

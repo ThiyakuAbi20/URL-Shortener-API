@@ -1,8 +1,10 @@
 package com.abiramy.urlshortener.service;
 
 import com.abiramy.urlshortener.dto.response.RegisterResponse;
+import com.abiramy.urlshortener.entity.ShortUrl;
 import com.abiramy.urlshortener.entity.User;
 import com.abiramy.urlshortener.exception.EmailAlreadyExistsException;
+import com.abiramy.urlshortener.exception.UrlNotFoundException;
 import com.abiramy.urlshortener.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -47,4 +49,6 @@ public class UserService {
         return response;
 
     }
+
+
 }

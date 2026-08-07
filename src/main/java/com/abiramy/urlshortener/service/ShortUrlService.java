@@ -110,4 +110,14 @@ public class ShortUrlService {
                         .toList();
     }
 
+    public void deleteUrl(Long id) {
+
+        ShortUrl shortUrl = shortUrlRepository
+                .findById(id)
+                .orElseThrow(()->
+                        new UrlNotFoundException("Short URL not found."));
+
+        shortUrlRepository.delete(shortUrl);
+    }
+
 }
