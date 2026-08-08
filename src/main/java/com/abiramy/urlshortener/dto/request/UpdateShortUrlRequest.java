@@ -1,19 +1,14 @@
 package com.abiramy.urlshortener.dto.request;
 
-import java.time.LocalDateTime;
-
 public class UpdateShortUrlRequest {
 
     private String originalUrl;
-    private LocalDateTime expiresAt;
 
     public UpdateShortUrlRequest() {
     }
 
-    public UpdateShortUrlRequest(String originalUrl,
-                                 LocalDateTime expiresAt) {
+    public UpdateShortUrlRequest(String originalUrl) {
         this.originalUrl = originalUrl;
-        this.expiresAt = expiresAt;
     }
 
     public String getOriginalUrl() {
@@ -23,13 +18,4 @@ public class UpdateShortUrlRequest {
     public void setOriginalUrl(String originalUrl) {
         this.originalUrl = originalUrl;
     }
-
-    public LocalDateTime getExpiresAt() {
-        return expiresAt;
-    }
-
-    public void setExpiresAt(LocalDateTime expiresAt) {
-        this.expiresAt = expiresAt;
-    }
 }
-

@@ -16,9 +16,16 @@ import java.util.Random;
 public class ShortUrlService {
 
     private final ShortUrlRepository shortUrlRepository;
+
     private static final String CHARACTERS =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
     private static final int SHORT_CODE_LENGTH = 6;
+
+    public ShortUrlService(ShortUrlRepository shortUrlRepository) {
+        this.shortUrlRepository = shortUrlRepository;
+    }
+
     public String redirectToOriginalUrl(String shortCode) {
 
         ShortUrl shortUrl = shortUrlRepository
@@ -26,18 +33,7 @@ public class ShortUrlService {
                 .orElseThrow(() ->
                         new UrlNotFoundException("Short URL not found."));
 
-        shortUrl.setClickCount(
-                shortUrl.getClickCount() + 1
-        );
-
-        shortUrlRepository.save(shortUrl);
-
         return shortUrl.getOriginalUrl();
-    }
-
-
-    public ShortUrlService (ShortUrlRepository shortUrlRepository){
-        this.shortUrlRepository = shortUrlRepository;
     }
 
     private String generateShortCode() {
@@ -52,38 +48,33 @@ public class ShortUrlService {
 
             for (int i = 0; i < SHORT_CODE_LENGTH; i++) {
 
-                int randomIndex = random.nextInt(CHARACTERS.length());
-
                 builder.append(
-                        CHARACTERS.charAt(randomIndex)
+                        CHARACTERS.charAt(
+                                random.nextInt(CHARACTERS.length())
+                        )
                 );
             }
 
-            shortCode =  builder.toString();
+            shortCode = builder.toString();
+
         } while (shortUrlRepository.findByShortCode(shortCode).isPresent());
 
         return shortCode;
     }
 
-    public CreateShortUrlResponse createShortUrl(
-            CreateShortUrlRequest request
-    ) {
+    public CreateShortUrlResponse createShortUrl(CreateShortUrlRequest request) {
 
-        if(request.getOriginalUrl() == null ||
-        request.getOriginalUrl().isBlank()){
+        if (request.getOriginalUrl() == null ||
+                request.getOriginalUrl().isBlank()) {
 
-            throw new IllegalArgumentException(
-                    "Original URL is required"
-            );
+            throw new IllegalArgumentException("Original URL is required");
         }
 
         String shortCode = generateShortCode();
 
-        ShortUrl shortUrl = new ShortUrl(
-                request.getOriginalUrl(),
-                shortCode,
-                request.getExpiresAt()
-        );
+        ShortUrl shortUrl = new ShortUrl();
+        shortUrl.setOriginalUrl(request.getOriginalUrl());
+        shortUrl.setShortCode(shortCode);
 
         ShortUrl savedShortUrl = shortUrlRepository.save(shortUrl);
 
@@ -96,26 +87,24 @@ public class ShortUrlService {
         );
     }
 
-    public List<ShortUrlResponse> getAllUrls(){
+    public List<ShortUrlResponse> getAllUrls() {
 
-                return shortUrlRepository.findAll()
-                        .stream()
-                        .map(shortUrl -> new ShortUrlResponse(
-                                shortUrl.getId(),
-                                shortUrl.getOriginalUrl(),
-                                shortUrl.getShortCode(),
-                                "http://localhost:8080/r/" + shortUrl.getShortCode(),
-                                shortUrl.getClickCount(),
-                                shortUrl.getCreatedAt()
-                        ))
-                        .toList();
+        return shortUrlRepository.findAll()
+                .stream()
+                .map(shortUrl -> new ShortUrlResponse(
+                        shortUrl.getId(),
+                        shortUrl.getOriginalUrl(),
+                        shortUrl.getShortCode(),
+                        "http://localhost:8080/r/" + shortUrl.getShortCode(),
+                        shortUrl.getCreatedAt()
+                ))
+                .toList();
     }
 
     public void deleteUrl(Long id) {
 
-        ShortUrl shortUrl = shortUrlRepository
-                .findById(id)
-                .orElseThrow(()->
+        ShortUrl shortUrl = shortUrlRepository.findById(id)
+                .orElseThrow(() ->
                         new UrlNotFoundException("Short URL not found."));
 
         shortUrlRepository.delete(shortUrl);
@@ -125,20 +114,17 @@ public class ShortUrlService {
             Long id,
             UpdateShortUrlRequest request) {
 
-        ShortUrl shortUrl = shortUrlRepository
-                .findById(id)
+        ShortUrl shortUrl = shortUrlRepository.findById(id)
                 .orElseThrow(() ->
                         new UrlNotFoundException("Short URL not found."));
 
         if (request.getOriginalUrl() == null ||
                 request.getOriginalUrl().isBlank()) {
 
-            throw new IllegalArgumentException(
-                    "Original URL is required");
+            throw new IllegalArgumentException("Original URL is required");
         }
 
         shortUrl.setOriginalUrl(request.getOriginalUrl());
-        shortUrl.setExpiresAt(request.getExpiresAt());
 
         ShortUrl updatedShortUrl = shortUrlRepository.save(shortUrl);
 
@@ -150,5 +136,4 @@ public class ShortUrlService {
                 "Short URL updated successfully"
         );
     }
-
 }

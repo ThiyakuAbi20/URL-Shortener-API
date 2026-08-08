@@ -5,60 +5,33 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "short_urls" )
+@Table(name = "short_urls")
 public class ShortUrl {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String originalUrl;
 
+    @Column(nullable = false, unique = true)
     private String shortCode;
 
-    private Long clickCount;
-
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    private LocalDateTime expiresAt;
+    public ShortUrl() {
+    }
 
-    public ShortUrl(String originalUrl,
-                    String shortCode,
-                    LocalDateTime expiresAt){
-
+    public ShortUrl(String originalUrl, String shortCode) {
         this.originalUrl = originalUrl;
         this.shortCode = shortCode;
-        this.clickCount = 0L;
+    }
+
+    @PrePersist
+    public void prePersist() {
         this.createdAt = LocalDateTime.now();
-        this.expiresAt = expiresAt;
-    }
-
-    public ShortUrl(){
-
-    }
-
-    public Long getClickCount() {
-        return clickCount;
-    }
-
-    public void setClickCount(Long clickCount) {
-        this.clickCount = clickCount;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getExpiresAt() {
-        return expiresAt;
-    }
-
-    public void setExpiresAt(LocalDateTime expiresAt) {
-        this.expiresAt = expiresAt;
     }
 
     public Long getId() {
@@ -83,5 +56,9 @@ public class ShortUrl {
 
     public void setShortCode(String shortCode) {
         this.shortCode = shortCode;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }
